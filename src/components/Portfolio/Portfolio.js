@@ -1,55 +1,62 @@
 import "./Portfolio.css";
 
-import arrowUp from "../../images/arrowUp.svg";
-
 function Portfolio() {
   return (
     <section className='portfolio'>
-      <h2 className='portfolio__title'>Портфолио</h2>
-      <ul className='portfolio__list'>
-        <li className='portfolio__item'>
+      <h3 className='portfolio__title portfolio__text'>Портфолио</h3>
+      <ul className='portfolio__links-container'>
+        <li className='portfolio__link portfolio__link_border'>
           <a
-            className='portfolio__link'
+            className='portfolio__link portfolio__text'
             href='https://kudenikovns.github.io/How-to-learn'
             target='_blank'
             rel='noreferrer'
           >
             Статичный сайт
-            <img
-              className='portfolio__link-arrow'
-              src={arrowUp}
-              alt='Стрелка вверх'
-            />
+          </a>
+          <a
+            className='portfolio__link portfolio__arrow'
+            href='https://kudenikovns.github.io/How-to-learn'
+            target='_blank'
+            rel='noreferrer'
+          >
+            ↗
           </a>
         </li>
-        <li className='portfolio__item'>
+        <li className='portfolio__link portfolio__link_border'>
           <a
-            className='portfolio__link'
+            className='portfolio__link portfolio__text'
             href='https://kudenikovns.github.io/Russian-travel/russian-travel/index.html'
             target='_blank'
             rel='noreferrer'
           >
             Адаптивный сайт
-            <img
-              className='portfolio__link-arrow'
-              src={arrowUp}
-              alt='Стрелка вверх'
-            />
+          </a>
+          <a
+            className='portfolio__link portfolio__arrow'
+            href='https://kudenikovns.github.io/Russian-travel/russian-travel/index.html'
+            target='_blank'
+            rel='noreferrer'
+          >
+            ↗
           </a>
         </li>
-        <li className='portfolio__item'>
+        <li className='portfolio__link portfolio__link_border'>
           <a
-            className='portfolio__link'
+            className='portfolio__link portfolio__text'
             href='https://github.com/KudenikovNS/react-mesto-api-full'
             target='_blank'
             rel='noreferrer'
           >
             Одностраничное приложение
-            <img
-              className='portfolio__link-arrow'
-              src={arrowUp}
-              alt='Изображение стрелки'
-            />
+          </a>
+          <a
+            className='portfolio__link portfolio__arrow'
+            href='https://github.com/KudenikovNS/react-mesto-api-full'
+            target='_blank'
+            rel='noreferrer'
+          >
+            ↗
           </a>
         </li>
       </ul>

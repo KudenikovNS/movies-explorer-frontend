@@ -1,99 +1,131 @@
 import "./Profile.css";
+import Header from "../Header/Header";
+import UserContext from "../../context/UserContext";
+import TooltipContext from "../../context/TooltipContext";
+import mainApi from "../../utils/MainApi";
+import useFormWithValidation from "../../utils/useFormWithValidation";
+import {
+  ERROR_CODE_CONFLICT,
+  MESSAGE_EMAIL,
+  NO_CONNECT_SERVER,
+  MESSAGE_UPDATE,
+} from "../../utils/constants";
 
-import { Link } from "react-router-dom";
-import React from "react";
-
-import UserForm from "../UserForm/UserForm";
-import currentUser from "../../utils/user";
-import { useValidation } from "../../utils/validation";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
-  const [name, setName] = React.useState(`${currentUser.name}`);
-  const [email, setEmail] = React.useState(`${currentUser.email}`);
-  const [isFormOpen, setIsFormOpen] = React.useState(false);
-  const logChangeClass = `form__logout ${isFormOpen && "form__logout_hidden"}`;
-  const editBtnChangeClass = `form__edit ${isFormOpen && "form__edit_hidden"}`;
-  const validationName = useValidation(false);
-  const validationEmail = useValidation(false);
+  const [disabled, setDisabled] = useState(true);
+  const [message, setMessage] = useState("");
+  const form = useFormWithValidation();
+  const { currentUser, setCurrentUser } = useContext(UserContext);
+  const { setTooltipMessage } = useContext(TooltipContext);
+  const navigate = useNavigate();
+  const handleSignuot = () => {
+    mainApi
+      .logout()
+      .then(() => {
+        setCurrentUser({});
+        localStorage.clear();
+        navigate("/");
+      })
+      .catch(() => setTooltipMessage(NO_CONNECT_SERVER));
+  };
 
-  const isFormInvalid = validationName.isInvalid || validationEmail.isInvalid;
-
-  const submitBtnForm = `form__btn_hidden ${
-    isFormOpen && "form__btn form__btn_visible"
-  } ${isFormInvalid && "form__btn_disabled"}`;
-
-  function openForm() {
-    setIsFormOpen(true);
-  }
-
-  function closeForm() {
-    setIsFormOpen(false);
-  }
-
-  function handleChangeName(evt) {
-    setName(evt.target.value);
-  }
-
-  function handleChangeEmail(evt) {
-    setEmail(evt.target.value);
-  }
-
-  function handleSubmit(evt) {
+  const handleSubmit = (evt) => {
     evt.preventDefault();
-    closeForm();
-  }
+    setDisabled(true);
+    mainApi
+      .patchUser(form.values)
+      .then((user) => {
+        setCurrentUser(user);
+        setMessage(MESSAGE_UPDATE);
+        form.resetForm();
+      })
+      .catch((err) => {
+        if (err.status === ERROR_CODE_CONFLICT) {
+          setMessage(MESSAGE_EMAIL);
+        } else {
+          setMessage(NO_CONNECT_SERVER);
+        }
+      });
+  };
+
+  useEffect(() => {
+    form.setValues({ name: currentUser.name, email: currentUser.email });
+  }, [currentUser]);
+
+  useEffect(() => {
+    const { name, email } = form.values;
+    form.isValid && (currentUser.name !== name || currentUser.email !== email)
+      ? setDisabled(false)
+      : setDisabled(true);
+  }, [form.values, currentUser]);
 
   return (
-    <section className='profile'>
-      <UserForm title={`Привет, ${currentUser.name}!`} onSubmit={handleSubmit}>
-        <fieldset className='form__input-list form__inputs_profile'>
-          <label className='form__label form__label_profile'>
-            Имя
+    <div className='profile'>
+      <Header />
+      <div className='profile__container'>
+        <h2 className='profile__title profile__text profile__text_marked'>
+          {`Привет, ${currentUser.name}!`}
+        </h2>
+        <form
+          name='profile'
+          className='profile__info'
+          id='profile'
+          onSubmit={handleSubmit}
+        >
+          <div className='profile__info-item'>
+            <p className='profile__text profile__text_marked'>Имя</p>
             <input
-              className='form__input form__input_profile'
-              id='name-input'
-              name='name'
+              className='profile__text profile__input'
               type='text'
+              name='name'
+              value={form.values.name || ""}
+              onChange={form.handleChange}
+              pattern='^[a-zA-Zа-яА-Я\s-]+$'
               required
-              minLength='2'
-              maxLength='30'
-              disabled={!isFormOpen}
-              value={name}
-              onChange={(evt) => {
-                handleChangeName(evt);
-                validationName.onChange(evt);
-              }}
             />
-          </label>
-          <label className='form__label form__label_profile'>
-            E-mail
+          </div>
+          <div className='profile__info-item'>
+            <p className='profile__text profile__text_marked'>E-mail</p>
             <input
-              className='form__input form__input_profile'
-              id='form-email-input'
-              name='email'
+              className='profile__text profile__input'
               type='email'
+              name='email'
+              value={form.values.email || ""}
+              onChange={form.handleChange}
+              pattern='^[\w]+@[a-zA-Z]+\.[a-zA-Z]{1,3}$'
               required
-              disabled={!isFormOpen}
-              value={email}
-              onChange={(evt) => {
-                handleChangeEmail(evt);
-                validationEmail.onChange(evt);
-              }}
             />
-          </label>
-        </fieldset>
-        <span className='form__profile-error profile-input-error'></span>
-        <button className={submitBtnForm} type='submit'>
-          Сохранить
-        </button>
-        <button className={editBtnChangeClass} type='button' onClick={openForm}>
-          Редактировать
-        </button>
-        <Link className={logChangeClass} to='/signin'>
-          Выйти из аккаунта
-        </Link>
-      </UserForm>
-    </section>
+          </div>
+        </form>
+        <ul className='profile__btns'>
+          <p className='profile__text profile__message'>{message}</p>
+          <li className='profile__btn-item'>
+            <button
+              className={`profile__btn ${
+                disabled && "profile__btn_disabled"
+              } profile__text`}
+              type='submit'
+              form='profile'
+              disabled={disabled}
+            >
+              Редактировать
+            </button>
+          </li>
+          <li className='profile__btn-item'>
+            <button
+              className='profile__btn profile__text profile__text_color'
+              type='button'
+              onClick={handleSignuot}
+            >
+              Выйти из аккаунта
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
   );
 }
 

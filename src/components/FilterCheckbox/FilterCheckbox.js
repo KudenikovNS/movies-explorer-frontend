@@ -1,18 +1,19 @@
 import "./FilterCheckbox.css";
 
-function FilterCheckbox() {
+export default function FilterCheckbox({ value, onChange }) {
   return (
-    <label className='filter-checkbox__label'>
-      Короткометражки
+    <label className='filter-checkbox__label' htmlFor='shorts'>
       <input
         className='filter-checkbox__input'
-        id='filter-checkbox-id'
-        name='checkbox'
+        id='shorts'
+        name='shorts'
         type='checkbox'
+        checked={value}
+        onChange={onChange}
       />
-      <span className='filter-checkbox__change' />
+      <div className='filter-checkbox__toggle'>
+        <div className='filter-checkbox__change' />
+      </div>
     </label>
   );
 }
-
-export default FilterCheckbox;

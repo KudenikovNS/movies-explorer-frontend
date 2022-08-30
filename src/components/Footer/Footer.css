@@ -1,93 +1,98 @@
 .footer {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 79px 10px 10px;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  grid-area: footer;
+  align-items: center;
+  padding: 0 70px;
+}
+
+.footer__text {
+  text-decoration: none;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 16px;
+  margin: 0;
+}
+
+.footer__text_link-black {
+  color: #000;
 }
 
 .footer__title {
-  color: #a0a0a0;
-  font-weight: 400;
-  font-size: 12px;
-  font-style: normal;
-  line-height: 1.25;
-  text-align: center;
-  margin: 0;
-  padding: 0 0 21px;
-  border-bottom: 1px solid #e8e8e8;
+  margin-bottom: 20px;
+  color: #8b8b8b;
 }
 
-.footer__link-list {
-  margin: 30px 0;
-  padding: 0;
-  list-style-type: none;
+.footer__copyrights {
+  color: #000;
+}
+
+.footer__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  border-top: 1px solid #e8e8e8;
+  padding: 20px 0;
 }
 
 .footer__links {
-  text-align: center;
-  height: fit-content;
-}
-
-.footer__links:not(:last-child) {
-  margin-bottom: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
 }
 
 .footer__link {
-  color: #000;
-  font-weight: 400;
-  font-size: 13px;
-  font-style: normal;
-  line-height: 1.25;
-  text-align: center;
-  text-decoration: none;
-  transition: all 0.3s ease;
+  margin-left: 20px;
+}
+
+.footer__link:first-of-type {
+  margin: 0;
+}
+
+.footer__link {
+  transition: 0.2s;
 }
 
 .footer__link:hover {
-  opacity: 0.7;
+  opacity: 60%;
 }
 
-.footer__year {
-  color: #a0a0a0;
-  font-weight: 400;
-  font-size: 12px;
-  font-style: normal;
-  line-height: 1.25;
-  text-align: center;
-  margin: 0;
-  padding: 0;
-}
-
-@media screen and (min-width: 600px) {
+@media (max-width: 768px) {
   .footer {
-    padding: 79px 30px 20px;
+    padding: 0 30px;
   }
+}
 
-  .footer__title {
-    font-size: 13px;
+@media (max-width: 414px) {
+  .footer {
+    padding: 0 10px;
   }
 
   .footer__container {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: space-between;
-    padding-top: 20px;
+    align-items: center;
+    flex-direction: column-reverse;
+    padding: 0 0 10px 0;
   }
 
-  .footer__link-list {
-    display: flex;
-    margin: 0;
+  .footer__links {
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 0;
   }
 
-  .footer__links:not(:last-child) {
-    margin: 0 20px 0 0;
+  .footer__link {
+    margin: 8px 0 0 0;
   }
 
-  .footer__year {
-    color: #000;
-    font-size: 13px;
-    line-height: 1.33;
-    margin-top: 0;
+  .copyrights {
+    color: #8b8b8b;
+  }
+
+  .footer__text {
+    font-size: 12px;
+    line-height: 15px;
   }
 }

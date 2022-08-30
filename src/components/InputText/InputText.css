@@ -1,0 +1,32 @@
+.input-text {
+  display: flex;
+  flex-direction: column;
+  height: 90px;
+  gap: 5px;
+}
+
+.input-text__text {
+  line-height: 12px;
+  font-size: 10px;
+}
+
+.input-text__name {
+  color: #a0a0a0;
+}
+
+.input-text__input {
+  color: #000;
+  border: none;
+  border-bottom: 1px solid #e8e8e8;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  padding: 0;
+  padding-bottom: 10px;
+}
+
+.input-text__error {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #ff3055;
+}

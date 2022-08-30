@@ -1,74 +1,56 @@
 import "./Navigation.css";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-import { NavLink } from "react-router-dom";
-import profile from "../../images/profile.svg";
+function Navigation() {
+  const [isMobileNavOpened, setIsMobileNavOpened] = useState(false);
 
-function Navigation({ isMenuBurgerOpen, closeBurger }) {
-  const navigationChangeClass = `navigation ${
-    isMenuBurgerOpen && "navigation_active"
-  }`;
+  function handleMenuClick() {
+    setIsMobileNavOpened(!isMobileNavOpened);
+  }
 
   return (
-    <nav className={navigationChangeClass}>
-      <ul className='navigation__list'>
-        <li className='navigation__list-item'>
-          <NavLink
-            to='/'
-            onClick={closeBurger}
-            className={({ isActive }) =>
-              isActive
-                ? "navigation__link navigation__link_active"
-                : "navigation__link"
-            }
-          >
+    <nav className='nav'>
+      <ul className={`nav__links ${isMobileNavOpened && "nav__links_open"}`}>
+        <button
+          className='nav__btn nav__btn-close'
+          type='button'
+          onClick={handleMenuClick}
+        />
+
+        <li className='nav__link'>
+          <Link to='/' className='nav__link-item nav__link-item_hidden'>
             Главная
-          </NavLink>
+          </Link>
         </li>
-        <li className='navigation__list-item'>
-          <NavLink
-            to='/movies'
-            onClick={closeBurger}
-            className={({ isActive }) =>
-              isActive
-                ? "navigation__link navigation__link_active"
-                : "navigation__link"
-            }
-          >
+        <li className='nav__link'>
+          <Link to='/movies' className='nav__link-item nav__link-item_account'>
             Фильмы
-          </NavLink>
+          </Link>
         </li>
-        <li className='navigation__list-item'>
-          <NavLink
+        <li className='nav__link '>
+          <Link
             to='/saved-movies'
-            onClick={closeBurger}
-            className={({ isActive }) =>
-              isActive
-                ? "navigation__link navigation__link_active"
-                : "navigation__link"
-            }
+            className='nav__link-item nav__link-item_account nav__link_margin'
           >
             Сохранённые фильмы
-          </NavLink>
+          </Link>
         </li>
-        <li className='navigation__list-item'>
-          <NavLink
+        <li className='nav__link account'>
+          <Link
             to='/profile'
-            onClick={closeBurger}
-            className={({ isActive }) =>
-              isActive
-                ? "navigation__link navigation__link_active"
-                : "navigation__link"
-            }
+            className='account__item-link nav__link-item_account'
           >
-            Аккаунт
-          </NavLink>
-          <img
-            className='navigation__img-profile'
-            src={profile}
-            alt='Иконка пользователя'
-          />
+            <p className='account__title'>Аккаунт</p>
+          </Link>
         </li>
       </ul>
+
+      <button
+        className='nav__btn navigation__show-button'
+        type='button'
+        onClick={handleMenuClick}
+      />
     </nav>
   );
 }

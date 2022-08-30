@@ -1,169 +1,56 @@
 .about-me {
-  max-width: 1140px;
-  margin: 0 auto;
-  padding: 70px 14px;
-}
-
-.about-me__title {
-  font-weight: 400;
-  font-style: normal;
-  font-size: 18px;
-  line-height: 1.22;
-  letter-spacing: -0.04em;
-  margin: 0;
-  padding: 0 0 28px 0;
-  border-bottom: 1px solid #000;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  grid-area: about-me;
+  gap: 67px;
+  padding: 0 70px;
 }
 
 .about-me__container {
   display: grid;
-  gap: 40px;
-  padding: 60px 0 0;
-  grid-template-areas:
-    "photo"
-    "text"
-    "links";
+  align-content: center;
+  grid-template-rows: 1fr 300px;
+  gap: 100px;
 }
 
-.about-me__student-photo {
-  grid-area: photo;
-  object-position: center;
-  width: 100%;
-  border-radius: 10px;
-}
-
-.about-me__student-name {
-  font-weight: 400;
-  font-style: normal;
-  font-size: 30px;
-  line-height: 1.13;
-  letter-spacing: -0.04em;
-  margin: 0 0 20px;
-  padding: 0;
-}
-
-.about-me__student-description {
-  font-weight: 400;
-  font-style: normal;
-  font-size: 11px;
-  line-height: 1.45;
-  margin: 0;
-  padding: 0;
-}
-
-.about-me__student-description_font {
-  font-weight: 500;
-}
-
-.about-me__student-description:not(:last-child) {
-  margin-bottom: 20px;
-}
-
-.about-me__student-links {
-  grid-area: links;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
-.about-me__student-link:not(:last-of-type) {
-  margin-right: 26px;
-}
-
-.about-me__student-link-item {
+.about-me__title {
+  display: inline-block;
   color: #000;
-  font-weight: 500;
-  font-style: normal;
-  font-size: 14px;
-  line-height: 1.2;
-  text-decoration: none;
-  transition: all 0.3s ease;
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 27px;
+  margin: 136px 0 0 0;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #000;
+  letter-spacing: -0.04em;
 }
 
-.about-me__student-link-item:hover {
-  opacity: 0.7;
-}
-
-@media screen and (min-width: 451px) {
-  .about-me__container {
-    gap: 20px;
-    grid-template-areas:
-      "text photo"
-      "links photo";
+@media (max-width: 800px) {
+  .about-me {
+    padding: 0 50px;
   }
 }
 
-@media screen and (min-width: 600px) {
+@media (max-width: 585px) {
   .about-me {
-    padding: 90px 50px;
+    align-items: center;
+    gap: 50px;
+    padding: 0 14px;
   }
 
   .about-me__title {
-    font-size: 22px;
-    padding-bottom: 23px;
-  }
-
-  .about-me__student-photo {
-    max-width: 255px;
-    height: 307px;
-  }
-
-  .about-me__container {
-    column-gap: 49px;
-    padding-top: 66px;
-  }
-
-  .about-me__student-name {
-    font-size: 40px;
-    line-height: 1;
-    margin-bottom: 16px;
-  }
-
-  .about-me__student-description {
-    font-size: 12px;
-    line-height: 1.5;
-  }
-
-  .about-me__student-link:not(:last-of-type) {
-    margin-right: 20px;
-  }
-}
-
-@media screen and (min-width: 1024px) {
-  .about-me {
-    padding-top: 110px;
-    padding-bottom: 100px;
-  }
-
-  .about-me__container {
-    column-gap: 270px;
-  }
-
-  .about-me__student-photo {
-    max-width: 270px;
-    height: 327px;
-  }
-
-  .about-me__student-name {
-    font-size: 50px;
-    line-height: 1.16;
-    margin-bottom: 18px;
-  }
-
-  .about-me__student-description {
-    font-size: 14px;
-    line-height: 1.57;
-  }
-
-  .about-me__student-description_font {
+    min-width: 100%;
     font-size: 18px;
-    line-height: 1.1;
+    line-height: 22px;
+    margin-top: 20px;
   }
 
-  .about-me__student-description:not(:last-child) {
-    margin-bottom: 26px;
+  .about-me__container {
+    display: flex;
+    flex-direction: column;
+    width: 292px;
+    gap: 70px;
   }
 }
