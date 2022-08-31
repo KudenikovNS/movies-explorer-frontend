@@ -1,75 +1,59 @@
 .filter-checkbox__label {
-  font-weight: 400;
-  font-size: 11px;
-  font-style: normal;
-  line-height: 1.6;
-  margin: 45px auto 0;
-  padding: 0;
-}
-
-.filter-checkbox__label:hover {
+  display: flex;
   cursor: pointer;
 }
 
-.filter-checkbox__input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-}
-
-.filter-checkbox__change {
+.filter-checkbox__toggle {
+  background-color: #e5cccc;
   position: relative;
-  background: #ebebeb;
-  display: inline-block;
-  vertical-align: middle;
   width: 36px;
   height: 20px;
-  margin-left: 13px;
   border-radius: 20px;
 }
 
-.filter-checkbox__change::after {
-  content: "";
+.filter-checkbox__toggle::after {
+  background-color: #2be080;
   position: absolute;
-  background-color: #f5f5f5;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  display: block;
+  content: "";
+  width: 0;
+  height: 0;
+  border-radius: 20px;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.filter-checkbox__change {
+  background: #ffffff;
+  position: absolute;
+  z-index: 2;
   top: 2px;
-  left: 2px;
+  left: 6px;
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 1px solid #ffffff;
-  box-sizing: border-box;
-  transition: all 0.5s ease;
+  transition: 0.3s;
 }
 
-.filter-checkbox__input:disabled + .filter-checkbox__change::after {
-  background-color: #f5f5f5;
-  left: 2px;
-  right: auto;
+.filter-checkbox__input {
+  visibility: hidden;
+  width: 0;
+  height: 0;
 }
 
-.filter-checkbox__input:checked + .filter-checkbox__change::after {
-  background-color: #2be080;
-  right: 2px;
-  left: auto;
+.filter-checkbox__input:checked + .filter-checkbox__toggle::after {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
 }
 
-.filter-checkbox__input:focus + .checkbox__pseudo-item {
-  box-shadow: 0 0 5px #2be080;
-}
-
-@media screen and (min-width: 600px) {
-  .filter-checkbox__label {
-    margin-top: 38px;
-    font-size: 13px;
-    line-height: 1.4;
-  }
-}
-
-@media screen and (min-width: 1024px) {
-  .filter-checkbox__label {
-    margin: 0;
-  }
+.filter-checkbox__input:checked
+  + .filter-checkbox__toggle
+  > .filter-checkbox__change {
+  left: 50%;
 }

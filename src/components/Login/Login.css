@@ -1,24 +1,120 @@
 .login {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 396px;
   min-height: 100vh;
-  margin: 0 auto;
-  padding: 56px 30px 30px;
+  display: grid;
+  grid-template-rows: 1fr 266px 1fr;
+  grid-template-columns: 396px;
+  justify-content: center;
+  align-items: center;
 }
 
-@media screen and (min-width: 600px) {
-  .login {
-    text-align: left;
-    padding: 232px 0 30px;
+.login__text {
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  color: #000;
+  margin: 0;
+}
+
+.login__text_grey {
+  color: #a0a0a0;
+}
+
+.login__text_red {
+  color: #ff3055;
+}
+
+.login__title {
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 29px;
+  margin: 40px 0;
+}
+
+.login__btn-submit {
+  width: 100%;
+  height: 45px;
+  font-weight: 500;
+  background-color: #3456f3;
+  color: #fff;
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.login__btn-submit:hover {
+  opacity: 60%;
+}
+
+.login__btn-submit_disabled {
+  opacity: 60%;
+  background-color: #4286f435;
+}
+
+.login__link {
+  text-decoration: none;
+  color: #3456f3;
+  transition: 0.2s;
+}
+
+.login__link:hover {
+  opacity: 60%;
+}
+
+.login__question {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.login__up {
+  display: flex;
+  flex-direction: column;
+  align-self: flex-end;
+  margin-top: 70px;
+}
+
+.login__form {
+  align-self: flex-start;
+}
+
+.login__down {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .login__down {
+    align-self: flex-start;
+    margin-top: 69px;
   }
 }
 
-@media screen and (min-width: 1024px) {
+@media (max-width: 450px) {
   .login {
-    padding: 70px 0;
+    grid-template-columns: 260px;
+  }
+
+  .login__text {
+    font-size: 12px;
+    line-height: 15px;
+  }
+
+  .login__title {
+    font-size: 24px;
+    line-height: 29px;
+    margin: 50px 0;
+  }
+
+  .login__up {
+    align-items: center;
+    align-self: center;
+  }
+
+  .login__down {
+    align-self: flex-end;
+    margin-bottom: 30px;
   }
 }

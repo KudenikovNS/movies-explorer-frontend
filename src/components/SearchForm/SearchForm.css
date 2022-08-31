@@ -1,110 +1,137 @@
 .search-form {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 60px 10px 10px;
-  box-sizing: border-box;
+  grid-area: search;
+  border-bottom: 1px solid #fff;
+  padding: 52px 0 44px 0;
+  margin: 0 62px 0 50px;
 }
 
 .search-form__container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.search-form__container::after {
-  background-color: rgba(170, 170, 170, 0.2);
-  content: "";
-  height: 1px;
-  width: calc(100% - 8px);
-  margin-top: 43px;
-  box-sizing: border-box;
-}
-
-.search-form__frame {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  box-sizing: border-box;
+  display: grid;
+  grid-template: "search button" auto / 1fr min-content;
+  column-gap: 30px;
   width: 100%;
-  border: 1.5px solid rgba(170, 170, 170, 0.2);
-  border-radius: 50px;
-  gap: 0;
+  background-color: #fff;
+  align-items: center;
+  padding: 19px;
+  padding-right: 0;
+  border-bottom: #e6e6e6;
+  border-top-left-radius: 9px;
+  border-bottom-left-radius: 9px;
+}
+
+.search-form__label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.search-form__text {
+  color: #000;
+  margin: 0;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 18px;
 }
 
 .search-form__input {
-  color: #a0a0a0;
-  background-color: transparent;
-  font-weight: 400;
-  font-size: 11px;
-  font-style: normal;
-  line-height: 1.6;
-  flex: 1 1 auto;
+  color: #000;
+  line-height: 34px;
+
+  grid-area: search;
+  width: 100%;
+  background: none;
   border: none;
-  padding: 10px 0px 15px 21px;
+  font-size: 28px;
 }
 
-.search-form__input:focus {
-  outline: none;
-  border: 1.5px solid #3456f3;
-  border-radius: 50px;
+.search-form__input::placeholder {
+  color: #8b8b8b;
 }
 
-.search-form__submit-btn {
-  background-image: url(../../images/lupa.svg);
-  background-position: center;
+.search-form__input_error::placeholder {
+  color: #ee3465;
+}
+
+.search-form__checkbox {
+  display: flex;
+  border-top-right-radius: 9px;
+  border-bottom-right-radius: 9px;
+  grid-area: checkbox;
+  align-items: center;
+  gap: 14px;
+  background-color: #fff;
+  padding: 25px 30px 0 19px;
+}
+
+.search-form__btn {
+  background-image: url("../../images/find-button.svg");
+  background-color: #fff;
+  background-position: left;
   background-repeat: no-repeat;
-  background-color: #3456f3;
-  border-radius: 48px;
+  background-size: contain;
   width: 80px;
-  height: 34px;
-  margin: -4px 5px 0 0;
-  padding: 0;
-  transition: all 0.3s ease;
+  min-height: 34px;
   border: none;
-}
-
-.search-form__submit-btn:hover {
+  padding: 0;
+  box-sizing: content-box;
+  padding-right: 30px;
   cursor: pointer;
-  opacity: 0.8;
+  grid-area: button;
 }
 
-@media screen and (min-width: 600px) {
+@media (max-width: 768px) {
   .search-form {
-    padding-right: 30px;
-    padding-left: 30px;
+    margin: 0 30px 0 30px;
+    padding: 80px 0 110px 0;
   }
 
-  .search-form__input {
-    font-size: 14px;
-    line-height: 1.3;
+  .search-form__btn {
+    padding-right: 19px;
   }
 
-  .search-form__container::after {
-    margin-top: 57px;
-    width: 100%;
+  .search-form__checkbox {
+    padding: 0 20px;
   }
 }
 
-@media screen and (min-width: 1024px) {
+@media (max-width: 515px) {
   .search-form {
-    padding-top: 80px;
+    margin: 0 10px 0 10px;
+    padding: 80px 0 0 0;
+    flex-wrap: wrap;
   }
 
   .search-form__container {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 83px 41px;
+    padding: 19px;
+    border-radius: 9px;
   }
 
-  .search-form__frame {
-    width: 70%;
-    max-width: 932px;
-    flex: 1 1 auto;
+  .search-form__btn {
+    padding: 0;
+    border: none;
   }
 
-  .search-form__container::after {
+  .search-form__icon {
+    display: none;
+  }
+
+  .search-form__input {
     margin: 0;
+  }
+
+  .search-form__checkbox {
+    padding: 45px 0;
+    background-color: transparent;
+  }
+
+  .search-form__text {
+    line-height: 18px;
+    font-size: 11px;
+  }
+
+  .search-form__input::placeholder {
+    line-height: 20px;
+    font-size: 14px;
   }
 }

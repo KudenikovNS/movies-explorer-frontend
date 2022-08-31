@@ -16,7 +16,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "depsev": "npm run build && scp -r ./build/* kudenikov_movies@51.250.102.147:/home/kudenikov_movies/movies-frontend"
   },
   "eslintConfig": {
     "extends": [

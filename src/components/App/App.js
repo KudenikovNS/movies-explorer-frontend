@@ -1,85 +1,100 @@
 import "./App.css";
-
-import { Route, Routes } from "react-router-dom";
-
-import Header from "../Header/Header";
 import Main from "../Main/Main";
-import Footer from "../Footer/Footer";
-
-import Login from "../Login/Login";
-import MoviesCardList from "../MoviesCardList/MoviesCardList";
-import PageNotFound from "../PageNotFound/PageNotFound";
-import Preloader from "../Preloader/Preloader";
-import Profile from "../Profile/Profile";
 import Register from "../Register/Register";
-import SearchForm from "../SearchForm/SearchForm";
+import Login from "../Login/Login";
+import Profile from "../Profile/Profile";
+import Movies from "../Movies/Movies";
+import SavedMovies from "../SavedMovies/SavedMovies";
+import PageNotFound from "../PageNotFound/PageNotFound";
+import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
+import InfoTooltip from "../InfoTooltip/InfoTooltip";
+
+import UserContext from "../../context/UserContext";
+import TooltipContext from "../../context/TooltipContext";
+import mainApi from "../../utils/MainApi";
+import { NO_CONNECT_SERVER } from "../../utils/constants";
+
+import React, { useEffect, useMemo, useState } from "react";
+import { Routes, Route } from "react-router-dom";
 
 function App() {
+  const [currentUser, setCurrentUser] = useState({});
+  const [tooltipMessage, setTooltipMessage] = useState("");
+  const loggedIn = JSON.parse(localStorage.getItem("loggedIn")) || false;
+
+  const tooltipContext = useMemo(
+    () => ({ tooltipMessage, setTooltipMessage }),
+    [tooltipMessage]
+  );
+
+  const userContext = useMemo(
+    () => ({ currentUser, setCurrentUser }),
+    [currentUser]
+  );
+
+  useEffect(() => {
+    if (loggedIn) {
+      mainApi
+        .getUser()
+        .then((user) => {
+          localStorage.setItem("userId", user._id);
+          setCurrentUser(user);
+        })
+        .catch(() => setTooltipMessage(NO_CONNECT_SERVER));
+    }
+  }, []);
+
   return (
     <div className='page'>
-      <Routes>
-        <Route
-          exact
-          path='/'
-          element={
-            <>
-              <Header isBackground={true} isLog={false} />
-              <Main />
-              <Footer />
-            </>
-          }
-        />
-        <Route
-          path='/movies'
-          element={
-            <>
-              <Header isBackground={false} isLog={true} />
-              <SearchForm />
-              <Preloader isWaiting={false} />
-              <MoviesCardList />
-              <Footer />
-            </>
-          }
-        />
-        <Route
-          path='/saved-movies'
-          element={
-            <>
-              <Header isBackground={false} isLog={true} />
-              <SearchForm />
-              <Preloader isWaiting={false} />
-              <MoviesCardList isSaved={true} />
-              <Footer />
-            </>
-          }
-        />
-        <Route
-          path='/signup'
-          element={
-            <>
-              <Register />
-            </>
-          }
-        />
-        <Route
-          path='/signin'
-          element={
-            <>
-              <Login />
-            </>
-          }
-        />
-        <Route
-          path='/profile'
-          element={
-            <>
-              <Header isBackground={false} isLog={true} />
-              <Profile />
-            </>
-          }
-        />
-        <Route path='*' element={<PageNotFound />} />
-      </Routes>
+      <UserContext.Provider value={userContext}>
+        <TooltipContext.Provider value={tooltipContext}>
+          <InfoTooltip message={tooltipMessage} />
+          <Routes>
+            <Route exact path='/' element={<Main />} />
+            <Route
+              path='/movies'
+              element={
+                <ProtectedRoute allowed={loggedIn}>
+                  <Movies />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/saved-movies'
+              element={
+                <ProtectedRoute allowed={loggedIn}>
+                  <SavedMovies />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/profile'
+              element={
+                <ProtectedRoute allowed={loggedIn}>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/signup'
+              element={
+                <ProtectedRoute allowed={!loggedIn}>
+                  <Register />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/signin'
+              element={
+                <ProtectedRoute allowed={!loggedIn}>
+                  <Login />
+                </ProtectedRoute>
+              }
+            />
+            <Route path='*' element={<PageNotFound />} />
+          </Routes>
+        </TooltipContext.Provider>
+      </UserContext.Provider>
     </div>
   );
 }

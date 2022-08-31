@@ -1,102 +1,109 @@
 import "./Register.css";
-
-import { Link } from "react-router-dom";
-import UserForm from "../UserForm/UserForm";
-import { useValidation } from "../../utils/validation";
-
 import Logo from "../Logo/Logo";
+import InputText from "../InputText/InputText";
+import UserContext from "../../context/UserContext";
+import mainApi from "../../utils/MainApi";
+import useFormWithValidation from "../../utils/useFormWithValidation";
+import { ERROR_CODE_CONFLICT } from "../../utils/constants";
 
-function Register() {
-  const validationName = useValidation(true);
-  const validationEmail = useValidation(true);
-  const validationPassword = useValidation(true);
+import React, { useState, useContext, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-  const isFormInvalid =
-    validationName.isInvalid ||
-    validationEmail.isInvalid ||
-    validationPassword.isInvalid;
+export default function Register() {
+  const { setCurrentUser } = useContext(UserContext);
+  const [disabled, setDisabled] = useState(true);
+  const [errorRegister, setErrorRegister] = useState("");
+  const form = useFormWithValidation();
+  const navigate = useNavigate();
 
-  const submitBtnForm = `form__btn ${isFormInvalid && "form__btn_disabled"}`;
-
-  function handleSubmit(evt) {
+  const handleSubmit = (evt) => {
     evt.preventDefault();
-  }
+    setDisabled(true);
+    mainApi
+      .register(form.values)
+      .then((user) =>
+        mainApi.login({ email: user.email, password: form.values.password })
+      )
+      .then(() => mainApi.getUser())
+      .then((user) => {
+        localStorage.setItem("loggedIn", true);
+        localStorage.setItem("userId", user._id);
+        setCurrentUser(user);
+        navigate("/movies");
+      })
+      .catch((err) => {
+        err.status === ERROR_CODE_CONFLICT
+          ? setErrorRegister("Данный email уже зарегистрирован")
+          : setErrorRegister("Нет соединения с сервером");
+      });
+  };
+
+  useEffect(() => {
+    setDisabled(!form.isValid);
+  }, [form.values]);
 
   return (
-    <section className='register'>
-      <Logo />
-      <UserForm title='Добро пожаловать!' onSubmit={handleSubmit}>
-        <fieldset className='form__input-list'>
-          <label className='form__label'>
-            Имя
-            <input
-              className='form__input'
-              id='name-input'
-              name='name'
-              type='text'
-              required
-              minLength='2'
-              maxLength='30'
-              placeholder='Имя'
-              onChange={(evt) => {
-                validationName.onChange(evt);
-              }}
-            />
-            <span className='form__text-error name-input-error'>
-              {validationName.isInvalid && validationName.errorMessage}
-            </span>
-          </label>
-          <label className='form__label'>
-            E-mail
-            <input
-              className='form__input'
-              id='form-email-input'
-              name='email'
-              type='email'
-              required
-              placeholder='E-mail'
-              onChange={(evt) => {
-                validationEmail.onChange(evt);
-              }}
-            />
-            <span className='form__text-error form-email-input-error'>
-              {validationEmail.isInvalid && validationEmail.errorMessage}
-            </span>
-          </label>
-          <label className='form__label'>
-            Пароль
-            <input
-              className='form__input'
-              id='form-password-input'
-              name='password'
-              type='password'
-              required
-              placeholder='Пароль'
-              onChange={(evt) => {
-                validationPassword.onChange(evt);
-              }}
-            />
-            <span className='form__text-error form-password-input-error'>
-              {validationPassword.isInvalid && validationPassword.errorMessage}
-            </span>
-          </label>
-        </fieldset>
+    <div className='register'>
+      <div className='register__up'>
+        <Logo />
+        <h2 className='register__title register__text'>Добро пожаловать!</h2>
+      </div>
+      <form
+        name='register'
+        className='register__form'
+        id='register'
+        onSubmit={handleSubmit}
+        noValidate
+      >
+        <InputText
+          name='name'
+          label='Имя'
+          type='text'
+          onChange={form.handleChange}
+          value={form.values.name || ""}
+          errorMessage={form.errors.name}
+          pattern='^[a-zA-Zа-яА-Я\s-]+$'
+        />
+        <InputText
+          name='email'
+          label='E-mail'
+          type='email'
+          onChange={form.handleChange}
+          value={form.values.email || ""}
+          errorMessage={form.errors.email}
+          pattern='^[\w]+@[a-zA-Z]+\.[a-zA-Z]{1,3}$'
+        />
+        <InputText
+          name='password'
+          type='password'
+          label='Пароль'
+          onChange={form.handleChange}
+          value={form.values.password || ""}
+          errorMessage={form.errors.password}
+        />
+      </form>
+
+      <div className='register__down'>
+        <p className='register__text register__text_color'>{errorRegister}</p>
         <button
-          className={submitBtnForm}
+          className={`register__btn-submit ${
+            disabled && "register__btn-submit_disabled"
+          } register__text`}
+          form='register'
           type='submit'
-          disabled={isFormInvalid}
+          disabled={disabled}
         >
           Зарегистрироваться
         </button>
-        <p className='form__login-reg'>
-          Уже зарегистрированы?
-          <Link className='form__login-reg-link' to='/signin'>
+        <div className='register__container-question'>
+          <p className='register__text register__container-question-text_color'>
+            Уже зарегистрированы?
+          </p>
+          <Link to='/signin' className='register__link register__text'>
             Войти
           </Link>
-        </p>
-      </UserForm>
-    </section>
+        </div>
+      </div>
+    </div>
   );
 }
-
-export default Register;

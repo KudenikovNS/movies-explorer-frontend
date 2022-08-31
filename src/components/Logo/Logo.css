@@ -1,9 +1,8 @@
 .logo {
-  width: 38px;
+  background-image: url("../../images/logo-header.svg");
+  background-repeat: no-repeat;
+  display: block;
+  width: 42px;
   height: 38px;
-  transition: all .3s ease;
-}
-
-.logo:hover {
-  opacity: .8;
+  margin-left: 15px;
 }
