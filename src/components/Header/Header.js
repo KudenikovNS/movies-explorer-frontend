@@ -1,22 +1,32 @@
-import "./Header.css";
 import Logo from "../Logo/Logo";
-import Navigation from "../Navigation/Navigation";
-import AuthLinks from "../AuthLinks/AuthLinks";
-import UserContext from "../../context/UserContext";
+import "./Header.css";
+import Visiter from "./Visiter/Visiter";
+import Account from "./Account/Account";
+import NavTab from "./NavTab/NavTab";
+import MenuMobile from "./MenuMobile/MenuMobile";
 
-import React, { useContext } from "react";
-
-function Header() {
-  const [isMenuBurgerOpen, setIsMenuBurgerOpen] = React.useState(false);
-  const { currentUser } = useContext(UserContext);
-  const headerClass = `header ${currentUser._id ? "" : "header_background"}`;
-
+export default function Header({
+  isLoggedIn,
+  isOpened,
+  handleClickImg,
+  headerDisable,
+}) {
   return (
-    <header className={headerClass}>
-      <Logo />
-      {currentUser._id ? <Navigation /> : <AuthLinks />}
+    <header
+      className={`header-bg ${!isLoggedIn && "header-bg-dark"} ${
+        headerDisable && "header-disable"
+      }`}
+    >
+      <div className='header container'>
+        <Logo />
+        <div className={`header__nav ${isLoggedIn && "menu-mobile__nav"}`}>
+          {isLoggedIn && <NavTab />}
+          {isLoggedIn ? <Account /> : <Visiter />}
+        </div>
+        {isLoggedIn ? (
+          <MenuMobile isOpened={isOpened} handleClickImg={handleClickImg} />
+        ) : null}
+      </div>
     </header>
   );
 }
-
-export default Header;

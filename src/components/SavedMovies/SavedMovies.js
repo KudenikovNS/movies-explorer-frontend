@@ -1,60 +1,66 @@
 import "./SavedMovies.css";
-import Header from "../Header/Header";
-import SearchForm from "../SearchForm/SearchForm";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
-import Preloader from "../Preloader/Preloader";
-import Footer from "../Footer/Footer";
-import TooltipContext from "../../context/TooltipContext";
-import searchFilter from "../../utils/searchFilter";
-import mainApi from "../../utils/MainApi";
-import { NO_CONNECT_SERVER, MESSAGE_NOT_FOUND } from "../../utils/constants";
-import React, { useState, useEffect, useContext } from "react";
+import SearchForm from "../SearchForm/SearchForm";
+import useSearchFilter from "../../utils/useSearchFilter";
 
-function SavedMovies() {
-  const [loading, setLoading] = useState(false);
-  const { setTooltipMessage } = useContext(TooltipContext);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [movies, setMovies] = useState(
-    JSON.parse(localStorage.getItem("savedMovies")) || []
+import { useState, useEffect } from "react";
+
+function SavedMovies({ handleMovieClickChenge, movies }) {
+  const [valueLocal, setValueLocal] = useState(
+    localStorage.getItem("movies-saved-search") ?? ""
   );
+  const [checkLocal, setCheckLocal] = useState(
+    JSON.parse(localStorage.getItem("movies-saved-check")) ?? false
+  );
+  const filteredMovies = useSearchFilter(movies, checkLocal, valueLocal);
+  const [localMoviesSaved, setLocalMoviesSaved] = useState(
+    JSON.parse(localStorage.getItem("movies-saved-filtered")) ?? filteredMovies
+  );
+  const [excuse, setExcuse] = useState("Введите название фильма для поиска");
 
-  const handleSearch = (query, isShort) => {
-    setLoading(true);
-    setErrorMessage("");
-    const savedMovies = JSON.parse(localStorage.getItem("savedMovies"));
-    const filtered = searchFilter(savedMovies, query, isShort);
-    if (filtered.length === 0) {
-      setErrorMessage(MESSAGE_NOT_FOUND);
+  function onChangeValue(value) {
+    localStorage.setItem("movies-saved-search", value);
+    setValueLocal(value);
+  }
+
+  function onChangeCheck(checked) {
+    localStorage.setItem("movies-saved-check", checked);
+    setCheckLocal(checked);
+  }
+  useEffect(() => {
+    if (localMoviesSaved !== filteredMovies) {
+      localStorage.setItem(
+        "movies-saved-filtered",
+        JSON.stringify(filteredMovies)
+      );
+      setLocalMoviesSaved(filteredMovies);
     }
-    setMovies(filtered);
-    setLoading(false);
-  };
+  }, [filteredMovies, localMoviesSaved]);
 
   useEffect(() => {
-    setLoading(true);
-
-    mainApi
-      .getFilms()
-      .then((savedMovies) => {
-        const user = localStorage.getItem("userId");
-        const ownMovies = savedMovies.filter((film) => film.owner === user);
-        localStorage.setItem("savedMovies", JSON.stringify(ownMovies));
-        setLoading(false);
-      })
-      .catch(() => setTooltipMessage(NO_CONNECT_SERVER));
-  }, []);
+    if (movies.length && !filteredMovies.length) {
+      setExcuse("Ничего не найдено");
+    }
+  }, [movies.length, filteredMovies.length]);
 
   return (
-    <div className='saved-movies'>
-      <Header />
-      <SearchForm handleSearch={handleSearch} />
-      {loading ? (
-        <Preloader />
-      ) : (
-        <MoviesCardList movies={movies} errorMessage={errorMessage} />
-      )}
-      <Footer />
-    </div>
+    <>
+      <SearchForm
+        initialChecked={checkLocal}
+        handleSearch={onChangeValue}
+        onChangeCheck={onChangeCheck}
+        initialValue={valueLocal}
+      />
+
+      <MoviesCardList
+        handleMovieClickChenge={handleMovieClickChenge}
+        movies={localMoviesSaved}
+      />
+
+      {filteredMovies.length === 0 ? (
+        <p className='movies__excuse'>{excuse}</p>
+      ) : null}
+    </>
   );
 }
 

@@ -1,101 +1,73 @@
 import "./Login.css";
-import Logo from "../Logo/Logo";
+
+import Form from "../Form/Form";
 import InputText from "../InputText/InputText";
-import UserContext from "../../context/UserContext";
-import { ERROR_CODE_UNAUTH } from "../../utils/constants";
+
+import DisableContext from "../../contexts/DisableContext";
 import useFormWithValidation from "../../utils/useFormWithValidation";
-import mainApi from "../../utils/MainApi";
+import Popups from "../Popups/Popups";
 
-import React, { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-function Login() {
-  const [errorLogin, setErrorLogin] = useState("");
-  const [disabled, setDisabled] = useState(true);
-  const { setCurrentUser } = useContext(UserContext);
-  const form = useFormWithValidation();
+function Login({ signin, isLoggedIn, popupText, isLuck, showPopup }) {
+  const { values, handleChange, isValid, errors } = useFormWithValidation();
+  const componentDisable = useContext(DisableContext);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setDisabled(!form.isValid);
-  }, [form.values]);
-
-  const handleSubmit = (evt) => {
+  function handleSubmit(evt) {
     evt.preventDefault();
+    signin(values.email, values.password);
+  }
 
-    setDisabled(true);
-
-    mainApi
-      .login(form.values)
-      .then(() => mainApi.getUser())
-      .then((user) => {
-        localStorage.setItem("loggedIn", true);
-        localStorage.setItem("userId", user._id);
-        setCurrentUser(user);
-        navigate("/movies");
-      })
-      .catch((err) => {
-        if (err.status === ERROR_CODE_UNAUTH) {
-          setErrorLogin("Неправильные почта или пароль");
-        } else {
-          setErrorLogin("Нет соединения с сервером");
-        }
-      });
-  };
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+    componentDisable({ header: true, footer: true });
+    return () => {
+      componentDisable({ header: false, footer: false });
+    };
+  }, [componentDisable, isLoggedIn, navigate]);
 
   return (
-    <div className='login'>
-      <div className='login__up'>
-        <Logo />
-        <h2 className='login__title login__text'>Рады видеть!</h2>
-      </div>
-      <form
-        className='login__form'
-        id='login'
-        name='login'
-        onSubmit={handleSubmit}
-        noValidate
+    <section className='register'>
+      <Popups showPopup={showPopup} popupText={popupText} isLuck={isLuck} />
+      <Form
+        title='Рады видеть!'
+        question='Ещё не Зарегистрированы?'
+        handleSubmit={handleSubmit}
+        textButton='Войти'
+        textLink='Регистрироваться'
+        urlNavigation='/signup'
+        isValid={isValid}
       >
         <InputText
+          titleInput='E-mail'
           name='email'
           type='email'
-          label='E-mail'
-          value={form.values.email || ""}
-          onChange={form.handleChange}
-          errorMessage={form.errors.email}
-          pattern='^[\w]+@[a-zA-Z]+\.[a-zA-Z]{1,3}$'
+          classNameInput='form-input_border'
+          handleChange={handleChange}
+          value={values.email}
+          placeholder='Введите E-mail'
+          required={true}
+          errors={errors.email}
         />
+
         <InputText
+          titleInput='Пароль'
           name='password'
-          label='Пароль'
           type='password'
-          onChange={form.handleChange}
-          errorMessage={form.errors.password}
-          value={form.values.password || ""}
+          classNameInput='form-input_border'
+          handleChange={handleChange}
+          placeholder='Введите пароль'
+          value={values.password}
+          required={true}
+          minLength='4'
+          errors={errors.password}
         />
-      </form>
-      <div className='login__down'>
-        <p className='login__text login__text_red'>{errorLogin}</p>
-        <button
-          className={`login__btn-submit ${
-            disabled && "login__btn-submit_disabled"
-          } login__text`}
-          type='submit'
-          form='login'
-          disabled={disabled}
-        >
-          Войти
-        </button>
-        <div className='login__question'>
-          <p className='login__text login__text_grey'>
-            Ещё не зарегистрированы?
-          </p>
-          <Link to='/signup' className='login__link login__text'>
-            Регистрация
-          </Link>
-        </div>
-      </div>
-    </div>
+      </Form>
+    </section>
   );
 }
 

@@ -1,21 +1,8 @@
-.movies {
-  min-height: 926px;
-  display: grid;
-  grid-template:
-    "header" 72px
-    "search" min-content
-    "movies" min-content
-    "footer" 172px / 100%;
-  min-height: 100vh;
-}
-
-@media (max-width: 414px) {
-  .movies {
-    grid-template:
-      "header" 72px
-      "search" min-content
-      "movies" min-content
-      "footer" 272px / 100%;
-    min-height: 1316px;
-  }
+.movies__excuse {
+  color: #ff3055;
+  text-align: center;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 14px;
+  font-style: normal;
 }

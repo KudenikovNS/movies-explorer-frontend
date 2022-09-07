@@ -1,30 +1,46 @@
 import "./InputText.css";
 
-function InputText({
+function Input({
+  classNameLabel,
+  titleInput,
   name,
-  label,
-  errorMessage,
-  pattern,
   type,
+  classNameInput,
+  handleChange,
   value,
-  onChange,
+  placeholder,
+  disabled,
+  pattern,
+  required,
+  minLength,
+  maxLength,
+  errors,
 }) {
   return (
-    <label className='input-text' htmlFor={name}>
-      <span className='input-text__name input-text__text'>{label}</span>
-      <input
-        className='input-text__input input-text__text'
-        name={name}
-        id={name}
-        onChange={onChange}
-        pattern={pattern}
-        type={type}
-        value={value}
-        required
-      />
-      <span className='input-text__error input-text__text'>{errorMessage}</span>
-    </label>
+    <>
+      <label className={`input-text__label ${classNameLabel}`}>
+        <span className='input-text__placeholder'>{titleInput}</span>
+        <input
+          name={name}
+          type={type}
+          className={`input ${classNameInput}`}
+          onChange={handleChange}
+          value={value || ""}
+          placeholder={placeholder}
+          disabled={disabled}
+          pattern={pattern}
+          required={required}
+          minLength={minLength}
+          maxLength={maxLength}
+        />
+      </label>
+      <span
+        className={`input-text__error ${errors && "input-text__error-show"}`}
+      >
+        {errors}
+      </span>
+    </>
   );
 }
 
-export default InputText;
+export default Input;

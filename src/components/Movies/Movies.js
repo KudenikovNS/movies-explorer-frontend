@@ -1,82 +1,118 @@
 import "./Movies.css";
-import Header from "../Header/Header";
-import SearchForm from "../SearchForm/SearchForm";
-import MoviesCardList from "../MoviesCardList/MoviesCardList";
 import Preloader from "../Preloader/Preloader";
-import Footer from "../Footer/Footer";
+import MoviesCardList from "../MoviesCardList/MoviesCardList";
+import SearchForm from "../SearchForm/SearchForm";
+import useSearchFilter from "../../utils/useSearchFilter";
 
-import getFilms from "../../utils/MoviesApi";
-import mainApi from "../../utils/MainApi";
-import searchFilter from "../../utils/searchFilter";
-import {
-  MESSAGE_MOVVIES_DANGER,
-  MESSAGE_NOT_FOUND,
-} from "../../utils/constants";
+import { useEffect, useState } from "react";
 
-import React, { useEffect, useState } from "react";
+import MOVIES_API from "../../utils/MoviesApi";
 
-function Movies() {
-  const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+function Movies({
+  handleMovieClickChenge,
+  listMoviesLength,
+  getMoviesMore,
+  savedMovies,
+}) {
+  const [excuse, setExcuse] = useState("Введите название фильма для поиска");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const filter = (query, shorts) => {
-    const savedMovies = JSON.parse(localStorage.getItem("movies"));
-    const filtered = searchFilter(savedMovies, query, shorts);
-    if (filtered.length === 0) {
-      setErrorMessage(MESSAGE_NOT_FOUND);
+  const [movies, setMovies] = useState(
+    JSON.parse(localStorage.getItem("movies")) ?? []
+  );
+  const [checkLocal, setCheckLocal] = useState(
+    JSON.parse(localStorage.getItem("check-movies")) ?? false
+  );
+  const [valueLocal, setValueLocal] = useState(
+    localStorage.getItem("movies-search-value") ?? ""
+  );
+
+  const filteredMovies = useSearchFilter(movies, checkLocal, valueLocal);
+
+  const [moviesLocal, setMoviesLocal] = useState(
+    JSON.parse(localStorage.getItem("filtered-movies")) ?? filteredMovies
+  );
+
+  function onChangeCheck(checked) {
+    localStorage.setItem("check-movies", checked);
+    setCheckLocal(checked);
+  }
+
+  function getMoviesAll() {
+    setIsLoading(true);
+    MOVIES_API.getMovies()
+      .then((moviesList) => {
+        if (moviesList.length) {
+          localStorage.setItem("movies", JSON.stringify(moviesList));
+          setMovies(moviesList);
+        }
+      })
+      .catch(() =>
+        setExcuse(
+          `Во время запроса произошла ошибка. 
+          Возможно, проблема с соединением или сервер недоступен.
+          Подождите немного и попробуйте ещё раз`
+        )
+      )
+      .finally(() => setIsLoading(false));
+  }
+
+  function onChangeValue(value) {
+    if (movies.length === 0) {
+      getMoviesAll();
     }
-    setMovies(filtered);
-    setLoading(false);
-  };
-
-  const handleSearch = (query, shorts) => {
-    setLoading(true);
-    setErrorMessage("");
-    const savedMovies = JSON.parse(localStorage.getItem("movies"));
-    if (!savedMovies) {
-      getFilms()
-        .then((films) => {
-          localStorage.setItem("movies", JSON.stringify(films));
-          filter(query, shorts);
-        })
-        .catch(() => {
-          setErrorMessage(MESSAGE_MOVVIES_DANGER);
-        });
-    } else {
-      filter(query, shorts);
-    }
-  };
+    localStorage.setItem("movies-search-value", value);
+    setValueLocal(value);
+  }
 
   useEffect(() => {
-    const savedMovies = localStorage.getItem("savedMovies");
-    if (!savedMovies) {
-      setLoading(true);
-      mainApi
-        .getFilms()
-        .then((films) => {
-          if (films.length > 0) {
-            localStorage.setItem("savedMovies", JSON.stringify(films));
-          }
-          setLoading(false);
-        })
-        .catch(() => {
-          setErrorMessage(MESSAGE_MOVVIES_DANGER);
-        });
+    if (moviesLocal !== filteredMovies) {
+      localStorage.setItem("filtered-movies", JSON.stringify(filteredMovies));
+      setMoviesLocal(filteredMovies);
     }
-  }, []);
+  }, [filteredMovies, moviesLocal]);
+
+  useEffect(() => {
+    if (movies.length && !filteredMovies.length) {
+      setExcuse("Ничего не найдено");
+    }
+  }, [movies.length, filteredMovies.length]);
 
   return (
-    <div className='movies'>
-      <Header />
-      <SearchForm handleSearch={handleSearch} />
-      {loading ? (
+    <>
+      <SearchForm
+        initialChecked={checkLocal}
+        handleSearch={onChangeValue}
+        initialValue={valueLocal}
+        disabledCheck={!valueLocal}
+        onChangeCheck={onChangeCheck}
+      />
+
+      {isLoading ? (
         <Preloader />
       ) : (
-        <MoviesCardList movies={movies} errorMessage={errorMessage} />
+        <MoviesCardList
+          handleMovieClickChenge={handleMovieClickChenge}
+          movies={moviesLocal}
+          savedMovies={savedMovies}
+          listMoviesLength={listMoviesLength}
+        />
       )}
-      <Footer />
-    </div>
+
+      {filteredMovies.length === 0 ? (
+        <p className='movies__excuse'>{excuse}</p>
+      ) : (
+        filteredMovies.length > listMoviesLength && (
+          <button
+            type='button'
+            className='movies__more'
+            onClick={getMoviesMore}
+          >
+            Ещё
+          </button>
+        )
+      )}
+    </>
   );
 }
 
