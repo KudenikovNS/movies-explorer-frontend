@@ -20,7 +20,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "depsev": "npm run build && scp -r ./build/* kudenikov_movies@51.250.102.147:/home/kudenikov_movies/movies-frontend"
+    "depsev": "npm run build && scp -r ./build/* kudenikov_films@51.250.73.239:/home/kudenikov_films/movies-frontend"
   },
   "eslintConfig": {
     "extends": [

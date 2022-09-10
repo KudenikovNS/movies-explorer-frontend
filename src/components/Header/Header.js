@@ -1,9 +1,9 @@
 import Logo from "../Logo/Logo";
 import "./Header.css";
-import Visiter from "./Visiter/Visiter";
-import Account from "./Account/Account";
-import NavTab from "./NavTab/NavTab";
-import MenuMobile from "./MenuMobile/MenuMobile";
+import Visiter from "../Visiter/Visiter";
+import Account from "../Account/Account";
+import NavTab from "../NavTab/NavTab";
+import MenuMobile from "../MenuMobile/MenuMobile";
 
 export default function Header({
   isLoggedIn,
