@@ -1,100 +1,88 @@
 import "./Register.css";
+import InputText from "../InputText/InputText";
+import Form from "../Form/Form";
+import Popups from "../Popups/Popups";
+import DisableContext from "../../contexts/DisableContext";
+import useFormWithValidation from "../../utils/useFormWithValidation";
 
-import { Link } from "react-router-dom";
-import UserForm from "../UserForm/UserForm";
-import { useValidation } from "../../utils/validation";
+import { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-import Logo from "../Logo/Logo";
-
-function Register() {
-  const validationName = useValidation(true);
-  const validationEmail = useValidation(true);
-  const validationPassword = useValidation(true);
-
-  const isFormInvalid =
-    validationName.isInvalid ||
-    validationEmail.isInvalid ||
-    validationPassword.isInvalid;
-
-  const submitBtnForm = `form__btn ${isFormInvalid && "form__btn_disabled"}`;
+function Register({ signup, popupText, showPopup, isLoggedIn, isLuck }) {
+  const { values, handleChange, isValid, errors } = useFormWithValidation();
+  const componentDisable = useContext(DisableContext);
+  const navigate = useNavigate();
 
   function handleSubmit(evt) {
     evt.preventDefault();
+    signup(values.name, values.email, values.password);
   }
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+    componentDisable({ header: true, footer: true });
+    return () => {
+      componentDisable({ header: false, footer: false });
+    };
+  }, [componentDisable, isLoggedIn, navigate]);
 
   return (
     <section className='register'>
-      <Logo />
-      <UserForm title='Добро пожаловать!' onSubmit={handleSubmit}>
-        <fieldset className='form__input-list'>
-          <label className='form__label'>
-            Имя
-            <input
-              className='form__input'
-              id='name-input'
-              name='name'
-              type='text'
-              required
-              minLength='2'
-              maxLength='30'
-              placeholder='Имя'
-              onChange={(evt) => {
-                validationName.onChange(evt);
-              }}
-            />
-            <span className='form__text-error name-input-error'>
-              {validationName.isInvalid && validationName.errorMessage}
-            </span>
-          </label>
-          <label className='form__label'>
-            E-mail
-            <input
-              className='form__input'
-              id='form-email-input'
-              name='email'
-              type='email'
-              required
-              placeholder='E-mail'
-              onChange={(evt) => {
-                validationEmail.onChange(evt);
-              }}
-            />
-            <span className='form__text-error form-email-input-error'>
-              {validationEmail.isInvalid && validationEmail.errorMessage}
-            </span>
-          </label>
-          <label className='form__label'>
-            Пароль
-            <input
-              className='form__input'
-              id='form-password-input'
-              name='password'
-              type='password'
-              required
-              placeholder='Пароль'
-              onChange={(evt) => {
-                validationPassword.onChange(evt);
-              }}
-            />
-            <span className='form__text-error form-password-input-error'>
-              {validationPassword.isInvalid && validationPassword.errorMessage}
-            </span>
-          </label>
-        </fieldset>
-        <button
-          className={submitBtnForm}
-          type='submit'
-          disabled={isFormInvalid}
-        >
-          Зарегистрироваться
-        </button>
-        <p className='form__login-reg'>
-          Уже зарегистрированы?
-          <Link className='form__login-reg-link' to='/signin'>
-            Войти
-          </Link>
-        </p>
-      </UserForm>
+      <Popups showPopup={showPopup} popupText={popupText} isLuck={isLuck} />
+      <Form
+        title='Добро пожаловать!'
+        question='Уже Зарегистрированы?'
+        handleSubmit={handleSubmit}
+        textButton='Зарегистрироваться'
+        textLink='Войти'
+        urlNavigation='/signin'
+        isValid={isValid}
+      >
+        <InputText
+          titleInput='Имя'
+          name='name'
+          type='text'
+          classNameInput='form-input_border'
+          handleChange={handleChange}
+          value={values.name}
+          placeholder='Введите имя'
+          required={true}
+          minLength='2'
+          maxLength='30'
+          errors={errors.name}
+          autoComplete='off'
+        />
+
+        <InputText
+          titleInput='E-mail'
+          name='email'
+          type='text'
+          classNameInput='form-input_border'
+          handleChange={handleChange}
+          value={values.email}
+          placeholder='Введите E-mail'
+          pattern='^[^@\s]+@[^@\s]+\.[^@\s]+$'
+          required={true}
+          errors={errors.email}
+          autoComplete='off'
+        />
+
+        <InputText
+          titleInput='Пароль'
+          name='password'
+          type='password'
+          classNameInput='form-input_border'
+          handleChange={handleChange}
+          value={values.password}
+          placeholder='Введите пароль'
+          required={true}
+          minLength='4'
+          errors={errors.password}
+          autoComplete='off'
+        />
+      </Form>
     </section>
   );
 }

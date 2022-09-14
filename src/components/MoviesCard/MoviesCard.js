@@ -1,35 +1,60 @@
 import "./MoviesCard.css";
+import like from "../../images/like.svg";
+import likeActive from "../../images/like-active.svg";
+import deleteCard from "../../images/delete-card.svg";
 
-import React from "react";
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
-function MoviesCard({ card, isSaved }) {
-  const [isLiked, setIsLiked] = React.useState(false);
+function MoviesCard({ handleMovieClickChenge, movie, savedMovies }) {
+  const [isLike, setIsLike] = useState(false);
+  const location = useLocation();
+  const isCard = location.pathname === "/saved-movies" ? true : false;
 
-  const btnChangeClass = `movies-card__btn ${
-    isSaved && "movies-card__btn_delete"
-  } ${isLiked && "movies-card__btn_active"}`;
-
-  function handleSaveMovie() {
-    if (isLiked) {
-      setIsLiked(false);
-    } else {
-      setIsLiked(true);
-    }
+  function getdurationMovie(duration) {
+    return `${Math.floor(duration / 60)}ч ${duration % 60}м`;
   }
 
   return (
-    <li className='movies-card'>
-      <div className='movies-card__container'>
-        <h2 className='movies-card__title'>{card.title}</h2>
-        <p className='movies-card__subtitle-time'>{card.time}</p>
-        <button className={btnChangeClass} onClick={handleSaveMovie} />
+    <div className='movies-card'>
+      <a href={movie.trailerLink} target='_blank' rel='noreferrer'>
+        <img
+          src={
+            isCard
+              ? movie.image
+              : `https://api.nomoreparties.co${movie.image.url}`
+          }
+          alt={movie.nameRU}
+          className='movies-card__img'
+        />
+      </a>
+      <div className='movies-card-container'>
+        <p className='movies-card-title'>{movie.nameRU}</p>
+        <button
+          className={`movies-card-button ${
+            isCard ? "movies-card-delete" : "movies-card-like"
+          }`}
+          onClick={() => {
+            setIsLike(!isLike);
+            handleMovieClickChenge(movie);
+          }}
+        >
+          <img
+            src={
+              isCard
+                ? deleteCard
+                : savedMovies.some((m) => m.movieId === movie.id)
+                ? likeActive
+                : like
+            }
+            alt={isCard ? "закрыть" : "лайк"}
+          />
+        </button>
       </div>
-      <img
-        className='movies-card__cover'
-        src={card.img}
-        alt='Обложка кинофильма'
-      />
-    </li>
+      <span className='movies-card__duration'>
+        {getdurationMovie(movie.duration)}
+      </span>
+    </div>
   );
 }
 

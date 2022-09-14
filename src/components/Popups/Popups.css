@@ -1,0 +1,48 @@
+.popups {
+  position: absolute;
+  top: 100px;
+  right: -100%;
+  width: 250px;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  border-radius: 8px;
+}
+
+.popups__luck {
+  border-color: #2be080;
+  background-color: #2be080;
+}
+
+.popups__error {
+  border-color: #ff3055;
+  background-color: #ff3055;
+}
+
+.popups__text {
+  color: #fff;
+  font-size: 13px;
+  line-height: 16px;
+  font-style: normal;
+  margin: 0;
+  padding: 10px;
+}
+
+.popups-show {
+  animation: show 5s ease-in-out;
+}
+
+@keyframes show {
+  0% {
+    right: -100%;
+  }
+
+  50% {
+    right: 150px;
+  }
+
+  100% {
+    display: none;
+    right: 150px;
+  }
+}

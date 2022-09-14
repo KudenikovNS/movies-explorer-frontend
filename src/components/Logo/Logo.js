@@ -1,14 +1,9 @@
 import "./Logo.css";
 
 import { Link } from "react-router-dom";
-import logo from "../../images/logo-header.svg";
 
 function Logo() {
-  return (
-    <Link to='/'>
-      <img className='logo' src={logo} alt='Логотип проекта' />
-    </Link>
-  );
+  return <Link to='/' className='logo' />;
 }
 
 export default Logo;

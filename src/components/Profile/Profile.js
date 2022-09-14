@@ -1,99 +1,106 @@
 import "./Profile.css";
+import Popups from "../Popups/Popups";
+import InputText from "../InputText/InputText";
+import DisableContext from "../../contexts/DisableContext";
+import UserContext from "../../contexts/UserContext";
+import useFormWithValidation from "../../utils/useFormWithValidation";
 
-import { Link } from "react-router-dom";
-import React from "react";
+import { useState, useContext, useEffect } from "react";
 
-import UserForm from "../UserForm/UserForm";
-import currentUser from "../../utils/user";
-import { useValidation } from "../../utils/validation";
+function Profile({ popupText, isLuck, editProfile, handleLogout }) {
+  const currentUser = useContext(UserContext);
+  const [isEdit, setIsEdit] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const componentDisable = useContext(DisableContext);
+  const { values, setValues, handleChange, isValid, setIsValid, errors } =
+    useFormWithValidation();
 
-function Profile() {
-  const [name, setName] = React.useState(`${currentUser.name}`);
-  const [email, setEmail] = React.useState(`${currentUser.email}`);
-  const [isFormOpen, setIsFormOpen] = React.useState(false);
-  const logChangeClass = `form__logout ${isFormOpen && "form__logout_hidden"}`;
-  const editBtnChangeClass = `form__edit ${isFormOpen && "form__edit_hidden"}`;
-  const validationName = useValidation(false);
-  const validationEmail = useValidation(false);
-
-  const isFormInvalid = validationName.isInvalid || validationEmail.isInvalid;
-
-  const submitBtnForm = `form__btn_hidden ${
-    isFormOpen && "form__btn form__btn_visible"
-  } ${isFormInvalid && "form__btn_disabled"}`;
-
-  function openForm() {
-    setIsFormOpen(true);
-  }
-
-  function closeForm() {
-    setIsFormOpen(false);
-  }
-
-  function handleChangeName(evt) {
-    setName(evt.target.value);
-  }
-
-  function handleChangeEmail(evt) {
-    setEmail(evt.target.value);
-  }
-
-  function handleSubmit(evt) {
+  function handleProfileSave(evt) {
     evt.preventDefault();
-    closeForm();
+    setIsEdit(false);
+    editProfile(values);
+    setShowPopup(true);
   }
+
+  function handleProfileEdit(evt) {
+    evt.preventDefault();
+    setIsEdit(true);
+    setShowPopup(false);
+  }
+
+  useEffect(() => {
+    if (
+      values.name === currentUser.name &&
+      values.email === currentUser.email
+    ) {
+      setIsValid(false);
+    }
+  }, [values]);
+
+  useEffect(() => {
+    setValues({ name: currentUser.name, email: currentUser.email });
+    componentDisable({ footer: true, ...componentDisable });
+    return () => {
+      componentDisable({ footer: false, ...componentDisable });
+    };
+  }, [componentDisable]);
 
   return (
-    <section className='profile'>
-      <UserForm title={`Привет, ${currentUser.name}!`} onSubmit={handleSubmit}>
-        <fieldset className='form__input-list form__inputs_profile'>
-          <label className='form__label form__label_profile'>
-            Имя
-            <input
-              className='form__input form__input_profile'
-              id='name-input'
+    <>
+      <section className='profile'>
+        <Popups showPopup={showPopup} popupText={popupText} isLuck={isLuck} />
+        <form className='form profile-form '>
+          <h2 className='profile__title'>{`Привет, ${values.name}`}</h2>
+          <div className='profile__inputs'>
+            <InputText
+              classNameLabel='profile__label form-input_border'
+              titleInput='Имя'
               name='name'
               type='text'
-              required
+              classNameInput='profile__input'
+              handleChange={handleChange}
+              value={values.name}
+              placeholder={"Введите имя"}
+              disabled={!isEdit}
+              required={true}
               minLength='2'
               maxLength='30'
-              disabled={!isFormOpen}
-              value={name}
-              onChange={(evt) => {
-                handleChangeName(evt);
-                validationName.onChange(evt);
-              }}
+              errors={errors.name}
             />
-          </label>
-          <label className='form__label form__label_profile'>
-            E-mail
-            <input
-              className='form__input form__input_profile'
-              id='form-email-input'
+            <InputText
+              classNameLabel='profile__label'
+              titleInput='E-mail'
               name='email'
-              type='email'
-              required
-              disabled={!isFormOpen}
-              value={email}
-              onChange={(evt) => {
-                handleChangeEmail(evt);
-                validationEmail.onChange(evt);
-              }}
+              type='text'
+              classNameInput='profile__input'
+              handleChange={handleChange}
+              value={values.email}
+              placeholder={"Введите E-mail"}
+              disabled={!isEdit}
+              pattern='^[^@\s]+@[^@\s]+\.[^@\s]+$'
+              required={true}
+              errors={errors.email}
             />
-          </label>
-        </fieldset>
-        <span className='form__profile-error profile-input-error'></span>
-        <button className={submitBtnForm} type='submit'>
-          Сохранить
-        </button>
-        <button className={editBtnChangeClass} type='button' onClick={openForm}>
-          Редактировать
-        </button>
-        <Link className={logChangeClass} to='/signin'>
+          </div>
+          <button
+            className={`profile__button profile__edit-button ${
+              isEdit && !isValid && "profile__button_inactive"
+            }`}
+            type={isEdit ? "submit" : "button"}
+            onClick={isEdit ? handleProfileSave : handleProfileEdit}
+            disabled={isEdit && !isValid}
+          >
+            {isEdit ? "Сохранить" : "Редактировать"}
+          </button>
+        </form>
+        <p
+          className='profile__button profile__btn-signout'
+          onClick={handleLogout}
+        >
           Выйти из аккаунта
-        </Link>
-      </UserForm>
-    </section>
+        </p>
+      </section>
+    </>
   );
 }
 

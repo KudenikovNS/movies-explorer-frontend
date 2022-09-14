@@ -107,7 +107,6 @@
   }
 
   .about-me__student-photo {
-    max-width: 255px;
     height: 307px;
   }
 
@@ -143,7 +142,6 @@
   }
 
   .about-me__student-photo {
-    max-width: 270px;
     height: 327px;
   }
 
